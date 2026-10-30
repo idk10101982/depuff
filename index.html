@@ -23,8 +23,8 @@ h2{font-size:18px;margin:0 0 5px}.sub{font-size:12px;color:var(--muted)}
 button{font:inherit;color:var(--white);background:#242424;border:1px solid #393939;border-radius:12px;padding:11px 14px;font-weight:650}button:active{opacity:.7}.primary{background:#eee;color:#090909;border-color:#eee}.wide{width:100%;margin-top:12px}
 .counter{display:flex;justify-content:space-between;align-items:center;margin-top:15px}.number{font-size:34px;font-weight:750}
 .choices{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:13px}.choices button.active{background:#eee;color:#090909;border-color:#eee}
-nav{position:fixed;bottom:0;left:0;right:0;background:#101010ee;backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:10px 12px calc(10px + env(safe-area-inset-bottom));display:flex;justify-content:center;gap:9px}
-nav button{flex:1;max-width:180px;font-size:12px;background:transparent;border-color:transparent;color:#aaa}nav button.active{background:#252525;color:#fff}
+nav{position:fixed;bottom:0;left:0;right:0;background:#101010ee;backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:10px 12px calc(10px + env(safe-area-inset-bottom));display:flex;justify-content:center;gap:3px;overflow-x:auto}
+nav button{flex:1;max-width:180px;font-size:10px;min-width:48px;padding:9px 3px;background:transparent;border-color:transparent;color:#aaa}nav button.active{background:#252525;color:#fff}
 .view{display:none}.view.active{display:block}.note{font-size:11px;text-align:center;color:#777;padding:10px}
 </style>
 </head>
@@ -49,9 +49,71 @@ nav button{flex:1;max-width:180px;font-size:12px;background:transparent;border-c
 <div class="panel"><h2>Everyday habits</h2><p>Get regular sleep, drink water throughout the day, and eat regular meals. Facial puffiness can be normal and temporary.</p></div>
 </section>
 <section id="sleep" class="view"><h1>Sleep check-in.</h1><p>How did you sleep last night?</p><div class="panel"><div class="choices" id="sleepChoices"><button data-sleep="Not great">Not great</button><button data-sleep="Okay">Okay</button><button data-sleep="Good">Good</button></div><p id="sleepResult">No check-in yet.</p></div><div class="panel"><h2>Wind-down idea</h2><p>Try a calm activity before bed and aim for a consistent sleep schedule.</p></div></section>
+<section id="journal" class="view">
+<h1>Daily check-in.</h1><p>Notice patterns without judging your appearance.</p>
+<div class="panel"><h2>How does your face feel today?</h2><div class="choices" id="feelChoices"><button data-feel="Normal">Normal</button><button data-feel="A little puffy">A little puffy</button><button data-feel="Uncomfortable">Uncomfortable</button></div><p id="feelResult">No check-in yet.</p></div>
+<div class="panel"><h2>Possible influences</h2><p class="sub">Select anything that might be relevant today. These are observations, not diagnoses.</p>
+<div id="factors">
+<label class="task"><input type="checkbox" data-factor="Sleep was different"><span>Sleep was different</span></label>
+<label class="task"><input type="checkbox" data-factor="Allergies or stuffy nose"><span>Allergies or stuffy nose</span></label>
+<label class="task"><input type="checkbox" data-factor="Ate something salty"><span>Ate something salty</span></label>
+<label class="task"><input type="checkbox" data-factor="Long day or lots of screen time"><span>Long day or lots of screen time</span></label>
+</div>
+<label class="sub" for="notes">Optional notes</label><textarea id="notes" rows="3" placeholder="Anything you noticed..." style="width:100%;margin-top:8px;padding:12px;border-radius:12px;background:#202020;border:1px solid #393939;color:#fff;font:inherit"></textarea>
+<button class="primary wide" id="saveJournal">Save check-in</button><p id="savedJournal" class="sub" aria-live="polite"></p></div>
+<div class="panel"><h2>Your recent notes</h2><div id="history" class="sub">Your saved check-ins will appear here.</div></div>
+</section>
+<section id="guide" class="view">
+<h1>Your gentle guide.</h1><p>Simple options based on how you're feeling today.</p>
+<div class="panel"><h2>Personalized suggestion</h2><p id="suggestion">Choose how your face feels in Daily Check-in to see a suggestion.</p><button class="wide" id="goJournal">Open daily check-in</button></div>
+<div class="panel"><h2>3-minute refresh</h2>
+<div class="task"><span><b>1. Cool cloth</b><small>Use a cool, clean washcloth for a few minutes. No ice directly on skin.</small></span></div>
+<div class="task"><span><b>2. Relax</b><small>Unclench your jaw and relax your forehead. No forceful rubbing or pressure.</small></span></div>
+<div class="task"><span><b>3. Reset</b><small>Have some water if you're thirsty, then continue your normal day.</small></span></div>
+</div>
+<div class="panel"><h2>Pattern insights</h2><p id="insights">Save a few check-ins to start noticing your own patterns.</p></div>
+</section>
+
+<section id="skin" class="view">
+<h1>Skin studio.</h1><p>Simple, gentle skin-care help. No ratings or flaw-finding.</p>
+<div class="panel">
+ <h2>Photo check-in</h2>
+ <p>Take or choose a photo to keep a visual skin-care note. The photo stays in this page and is not uploaded or analyzed by AI.</p>
+ <label for="facePhoto" class="primary" style="display:block;text-align:center;padding:12px;border-radius:12px;font-weight:700;cursor:pointer">📷 Take a photo / Choose photo</label>
+ <input id="facePhoto" type="file" accept="image/*" capture="user" style="display:none">
+ <img id="photoPreview" alt="Your selected photo preview" style="display:none;width:100%;max-height:320px;object-fit:contain;border-radius:14px;margin-top:12px;background:#080808">
+ <button id="clearPhoto" class="wide" style="display:none">Remove photo</button>
+ <p class="sub">A photo can't reliably diagnose skin conditions or measure facial puffiness. Avoid comparing photos or judging normal features.</p>
+</div>
+<div class="panel">
+ <h2>Build a simple routine</h2>
+ <p>Choose what best describes how your skin usually feels. This is general guidance, not a diagnosis.</p>
+ <label class="sub" for="skinFeel">My skin usually feels</label>
+ <select id="skinFeel" style="width:100%;margin:8px 0 14px;padding:12px;border-radius:12px;background:#202020;color:#fff;border:1px solid #393939">
+ <option value="">Choose one</option><option value="normal">Comfortable / balanced</option><option value="dry">Dry or tight</option><option value="oily">Oily or shiny</option><option value="sensitive">Sensitive or easily irritated</option><option value="combination">Oily in some areas, dry in others</option>
+ </select>
+ <label class="sub" for="skinGoal">What would you like help with?</label>
+ <select id="skinGoal" style="width:100%;margin:8px 0 14px;padding:12px;border-radius:12px;background:#202020;color:#fff;border:1px solid #393939">
+ <option value="">Choose one</option><option value="basic">A simple everyday routine</option><option value="breakouts">Occasional breakouts</option><option value="dryness">Dryness or tightness</option><option value="redness">Redness or irritation</option><option value="sun">Sun protection</option>
+ </select>
+ <button class="primary wide" id="makeSkinRoutine">Show my gentle routine</button>
+ <div id="skinRoutine" class="sub" style="margin-top:14px" aria-live="polite">Choose your options to see suggestions.</div>
+</div>
+<div class="panel">
+ <h2>Product shelf</h2>
+ <p>Look for these basic product types. You don't need all of them, and simple is usually enough.</p>
+ <div class="task"><span><b>1. Gentle cleanser</b><small>Fragrance-free, mild, non-scrubbing. Use lukewarm water; don't wash repeatedly.</small></span></div>
+ <div class="task"><span><b>2. Moisturizer</b><small>Fragrance-free and non-comedogenic if you tend to break out. A light lotion may feel comfortable for oily skin; a cream may suit dry skin.</small></span></div>
+ <div class="task"><span><b>3. Sunscreen</b><small>Broad-spectrum SPF 30 or higher. Choose one you like wearing and reapply as directed on the label.</small></span></div>
+ <div class="task"><span><b>Optional: acne care</b><small>If breakouts bother you, ask a parent/guardian, pharmacist, or clinician about a suitable acne product. Start one new product at a time and follow its label.</small></span></div>
+ <p class="sub">Patch-test new products, stop if they cause burning or a rash, and avoid harsh scrubs, strong DIY treatments, or using lots of new products at once.</p>
+</div>
+<div class="panel"><h2>When to get help</h2><p>If you have painful, persistent, worsening, or scarring acne, or a rash that doesn't settle, a healthcare professional or dermatologist can help. Sudden facial swelling, especially with trouble breathing, needs urgent medical help.</p></div>
+</section>
+
 <section id="about" class="view"><h1>About DEPUFF.</h1><div class="panel"><h2>Free, simple wellness.</h2><p>DEPUFF is a personal habit tracker, not a medical tool. It does not scan or rate your face, diagnose conditions, or promise to change your appearance.</p><p>Your checklist, water count and sleep check-in are saved on this device.</p></div></section>
 </main>
-<nav><button class="active" data-view="home">HOME</button><button data-view="routine">ROUTINE</button><button data-view="sleep">SLEEP</button><button data-view="about">ABOUT</button></nav>
+<nav><button class="active" data-view="home">HOME</button><button data-view="routine">ROUTINE</button><button data-view="sleep">SLEEP</button><button data-view="journal">LOG</button><button data-view="guide">GUIDE</button><button data-view="skin">SKIN</button><button data-view="about">ABOUT</button></nav>
 <script>
 const $=s=>document.querySelector(s);
 const day=new Date().toISOString().slice(0,10), key='depuff-'+day;
@@ -70,7 +132,69 @@ $('#reset').onclick=()=>{state.tasks={};save();render()};
 $('#plus').onclick=()=>{state.water++;save();render()};$('#minus').onclick=()=>{state.water=Math.max(0,state.water-1);save();render()};
 document.querySelectorAll('[data-sleep]').forEach(b=>b.onclick=()=>{state.sleep=b.dataset.sleep;save();render()});
 document.querySelectorAll('nav [data-view]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===b.dataset.view));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x===b));});
-render();
+
+// Daily check-in data and locally saved history
+const journalKey='depuff-journal-v1';
+let journal=JSON.parse(localStorage.getItem(journalKey)||'[]');
+function saveJournalHistory(){localStorage.setItem(journalKey,JSON.stringify(journal));}
+function updateSuggestion(){
+ const feeling=state.feeling;
+ const suggestions={
+  'Normal':'Keep doing your usual comfortable routine. There is no need to do anything extra.',
+  'A little puffy':'If it feels comfortable, try a cool washcloth for a few minutes and carry on with your normal hydration and meals.',
+  'Uncomfortable':'Take it easy and notice how you feel. If swelling is sudden, severe, painful, one-sided, or affects breathing, tell a trusted adult and get medical help.'
+ };
+ $('#suggestion').textContent=suggestions[feeling]||'Choose how your face feels in Daily Check-in to see a suggestion.';
+}
+function renderJournal(){
+ document.querySelectorAll('[data-feel]').forEach(b=>b.classList.toggle('active',b.dataset.feel===state.feeling));
+ $('#feelResult').textContent=state.feeling?'Today: '+state.feeling+'.':'No check-in yet.';
+ document.querySelectorAll('[data-factor]').forEach(x=>x.checked=(state.factors||[]).includes(x.dataset.factor));
+ $('#notes').value=state.notes||'';
+ const list=journal.slice(-5).reverse();
+ $('#history').innerHTML=list.length?list.map(x=>'<div style="padding:10px 0;border-bottom:1px solid #292929"><b>'+escapeHTML(x.date)+'</b><br>'+escapeHTML(x.feeling||'No feeling selected')+'<br><span style="color:#999">'+escapeHTML((x.factors||[]).join(' · '))+'</span>'+(x.notes?'<br>'+escapeHTML(x.notes):'')+'</div>').join(''):'Your saved check-ins will appear here.';
+ const puffy=journal.filter(x=>x.feeling==='A little puffy'||x.feeling==='Uncomfortable');
+ $('#insights').textContent=journal.length<3?'Save a few check-ins to start noticing your own patterns.':(puffy.length+' of your last '+journal.length+' saved check-ins mention puffiness or discomfort. Look at your notes for possible patterns; this is not a diagnosis.');
+ updateSuggestion();
+}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+document.querySelectorAll('[data-feel]').forEach(b=>b.onclick=()=>{state.feeling=b.dataset.feel;save();renderJournal();});
+$('#saveJournal').onclick=()=>{
+ state.factors=[...document.querySelectorAll('[data-factor]:checked')].map(x=>x.dataset.factor);
+ state.notes=$('#notes').value.trim();save();
+ journal.push({date:new Date().toLocaleDateString(),feeling:state.feeling||'',factors:state.factors,notes:state.notes});
+ journal=journal.slice(-30);saveJournalHistory();renderJournal();$('#savedJournal').textContent='Check-in saved on this device.';
+};
+$('#goJournal').onclick=()=>document.querySelector('nav [data-view="journal"]').click();
+
+
+// Photo check-in: local preview only; no upload, AI diagnosis, or persistent photo storage.
+const photoInput=$('#facePhoto'), photoPreview=$('#photoPreview'), clearPhoto=$('#clearPhoto');
+let photoUrl=null;
+photoInput.addEventListener('change',()=>{
+ if(photoUrl)URL.revokeObjectURL(photoUrl);
+ const file=photoInput.files&&photoInput.files[0];
+ if(!file){photoPreview.style.display='none';clearPhoto.style.display='none';return;}
+ if(!file.type.startsWith('image/'))return;
+ photoUrl=URL.createObjectURL(file);photoPreview.src=photoUrl;
+ photoPreview.style.display='block';clearPhoto.style.display='block';
+});
+clearPhoto.onclick=()=>{if(photoUrl)URL.revokeObjectURL(photoUrl);photoUrl=null;photoInput.value='';photoPreview.removeAttribute('src');photoPreview.style.display='none';clearPhoto.style.display='none';};
+$('#makeSkinRoutine').onclick=()=>{
+ const feel=$('#skinFeel').value, goal=$('#skinGoal').value;
+ if(!feel||!goal){$('#skinRoutine').textContent='Choose both options first.';return;}
+ const baseRoutine='<b>Morning:</b> rinse or use a gentle cleanser if needed, apply moisturizer, then broad-spectrum SPF 30+ sunscreen.<br><br><b>Evening:</b> use a gentle cleanser and moisturizer.';
+ const extra={
+ basic:'Keep it simple and consistent. You do not need extra steps if your skin feels comfortable.',
+ breakouts:'Choose products labeled non-comedogenic. Avoid picking or scrubbing. For acne treatment options, ask a trusted adult or pharmacist and follow the product label.',
+ dryness:'Use lukewarm water and a fragrance-free cream or lotion after washing. Avoid hot water and harsh exfoliation.',
+ redness:'Keep the routine minimal: gentle cleanser, plain fragrance-free moisturizer, and sunscreen. Pause products that sting or irritate.',
+ sun:'Use broad-spectrum SPF 30 or higher every morning when going outside; follow the label for reapplication.'
+ };
+ $('#skinRoutine').innerHTML=baseRoutine+'<br><br><b>For your goal:</b> '+extra[goal]+'<br><br><span style="color:#999">Skin type selected: '+feel+'. These are general suggestions, not a diagnosis.</span>';
+};
+
+render();renderJournal();
 if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
 </body></html>
